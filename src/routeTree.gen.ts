@@ -14,8 +14,8 @@ import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as PipelineRouteImport } from './routes/pipeline'
 import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as CustomersRouteImport } from './routes/customers'
-import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CampaignsIndexRouteImport } from './routes/campaigns.index'
 import { Route as CampaignsNewRouteImport } from './routes/campaigns.new'
 
 const SurveysRoute = SurveysRouteImport.update({
@@ -43,14 +43,14 @@ const CustomersRoute = CustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CampaignsRoute = CampaignsRouteImport.update({
-  id: '/campaigns',
-  path: '/campaigns',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampaignsIndexRoute = CampaignsIndexRouteImport.update({
+  id: '/campaigns/',
+  path: '/campaigns/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampaignsNewRoute = CampaignsNewRouteImport.update({
@@ -61,76 +61,76 @@ const CampaignsNewRoute = CampaignsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
   '/campaigns/new': typeof CampaignsNewRoute
+  '/campaigns/': typeof CampaignsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
   '/campaigns/new': typeof CampaignsNewRoute
+  '/campaigns': typeof CampaignsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
   '/campaigns/new': typeof CampaignsNewRoute
+  '/campaigns/': typeof CampaignsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/campaigns'
     | '/customers'
     | '/leads'
     | '/pipeline'
     | '/reports'
     | '/surveys'
     | '/campaigns/new'
+    | '/campaigns/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/campaigns'
     | '/customers'
     | '/leads'
     | '/pipeline'
     | '/reports'
     | '/surveys'
     | '/campaigns/new'
+    | '/campaigns'
   id:
     | '__root__'
     | '/'
-    | '/campaigns'
     | '/customers'
     | '/leads'
     | '/pipeline'
     | '/reports'
     | '/surveys'
     | '/campaigns/new'
+    | '/campaigns/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CampaignsRoute: typeof CampaignsRouteWithChildren
   CustomersRoute: typeof CustomersRoute
   LeadsRoute: typeof LeadsRoute
   PipelineRoute: typeof PipelineRoute
   ReportsRoute: typeof ReportsRoute
   SurveysRoute: typeof SurveysRoute
+  CampaignsIndexRoute: typeof CampaignsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -170,18 +170,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaigns': {
-      id: '/campaigns'
-      path: '/campaigns'
-      fullPath: '/campaigns'
-      preLoaderRoute: typeof CampaignsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campaigns/': {
+      id: '/campaigns/'
+      path: '/campaigns'
+      fullPath: '/campaigns/'
+      preLoaderRoute: typeof CampaignsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campaigns/new': {
@@ -194,27 +194,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CampaignsRouteChildren {
-  CampaignsNewRoute: typeof CampaignsNewRoute
-}
-
-const CampaignsRouteChildren: CampaignsRouteChildren = {
-  CampaignsNewRoute: CampaignsNewRoute,
-}
-
-const CampaignsRouteWithChildren = CampaignsRoute._addFileChildren(
-  CampaignsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CampaignsRoute: CampaignsRouteWithChildren,
   CustomersRoute: CustomersRoute,
   LeadsRoute: LeadsRoute,
   PipelineRoute: PipelineRoute,
   ReportsRoute: ReportsRoute,
   SurveysRoute: SurveysRoute,
+  CampaignsIndexRoute: CampaignsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

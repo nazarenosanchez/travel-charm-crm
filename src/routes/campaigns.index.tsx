@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Mail, MessageSquare, Plus, MoreHorizontal, TrendingUp, Eye, Reply, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/campaigns")({
+export const Route = createFileRoute("/campaigns/")({
   head: () => ({ meta: [{ title: "Campañas — Voyage CRM" }, { name: "description", content: "Crea campañas WhatsApp y Email segmentadas." }] }),
   component: CampaignsPage,
 });
