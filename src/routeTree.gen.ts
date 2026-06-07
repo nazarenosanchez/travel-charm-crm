@@ -16,6 +16,7 @@ import { Route as LeadsRouteImport } from './routes/leads'
 import { Route as CustomersRouteImport } from './routes/customers'
 import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CampaignsNewRouteImport } from './routes/campaigns.new'
 
 const SurveysRoute = SurveysRouteImport.update({
   id: '/surveys',
@@ -52,34 +53,42 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignsNewRoute = CampaignsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => CampaignsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRoute
+  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
+  '/campaigns/new': typeof CampaignsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRoute
+  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
+  '/campaigns/new': typeof CampaignsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/campaigns': typeof CampaignsRoute
+  '/campaigns': typeof CampaignsRouteWithChildren
   '/customers': typeof CustomersRoute
   '/leads': typeof LeadsRoute
   '/pipeline': typeof PipelineRoute
   '/reports': typeof ReportsRoute
   '/surveys': typeof SurveysRoute
+  '/campaigns/new': typeof CampaignsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/pipeline'
     | '/reports'
     | '/surveys'
+    | '/campaigns/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/pipeline'
     | '/reports'
     | '/surveys'
+    | '/campaigns/new'
   id:
     | '__root__'
     | '/'
@@ -109,11 +120,12 @@ export interface FileRouteTypes {
     | '/pipeline'
     | '/reports'
     | '/surveys'
+    | '/campaigns/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CampaignsRoute: typeof CampaignsRoute
+  CampaignsRoute: typeof CampaignsRouteWithChildren
   CustomersRoute: typeof CustomersRoute
   LeadsRoute: typeof LeadsRoute
   PipelineRoute: typeof PipelineRoute
@@ -172,12 +184,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaigns/new': {
+      id: '/campaigns/new'
+      path: '/new'
+      fullPath: '/campaigns/new'
+      preLoaderRoute: typeof CampaignsNewRouteImport
+      parentRoute: typeof CampaignsRoute
+    }
   }
 }
 
+interface CampaignsRouteChildren {
+  CampaignsNewRoute: typeof CampaignsNewRoute
+}
+
+const CampaignsRouteChildren: CampaignsRouteChildren = {
+  CampaignsNewRoute: CampaignsNewRoute,
+}
+
+const CampaignsRouteWithChildren = CampaignsRoute._addFileChildren(
+  CampaignsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CampaignsRoute: CampaignsRoute,
+  CampaignsRoute: CampaignsRouteWithChildren,
   CustomersRoute: CustomersRoute,
   LeadsRoute: LeadsRoute,
   PipelineRoute: PipelineRoute,
