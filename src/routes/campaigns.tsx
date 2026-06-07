@@ -53,7 +53,7 @@ function CampaignsPage() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="gap-1.5"><Plus className="h-4 w-4" />Plantilla</Button>
-            <Button size="sm" className="gap-1.5"><Plus className="h-4 w-4" />Nueva campaña</Button>
+            <Button asChild size="sm" className="gap-1.5"><Link to="/campaigns/new"><Plus className="h-4 w-4" />Nueva campaña</Link></Button>
           </div>
         </div>
 
